@@ -33,6 +33,7 @@ $channels = [
 Finally, be sure to set your `AXIOM_API_TOKEN` and `AXIOM_DATASET` environment variables in `.env`. You can create a token in the [Axiom dashboard](https://app.axiom.co/barkpass-lxgt/settings/api-tokens).
 
 ```bash
+LOG_CHANNEL=axiom
 AXIOM_API_TOKEN=your-api-token
 AXIOM_DATASET=your-dataset
 ```
