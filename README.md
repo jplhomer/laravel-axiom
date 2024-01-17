@@ -39,9 +39,9 @@ AXIOM_DATASET=your-dataset
 
 ## Performance Considerations
 
-Since Axiom logs are sent over HTTP, you may want to consider the performance impact of sending logs during request time. By default, this package will send logs to Axiom synchronously. This means that, each time your log something, your application will wait for the request to Axiom to complete before continuing to process the request.
+Since Axiom logs are sent over HTTP, you may want to consider the performance impact of sending logs during request time. By default, this package will send logs to Axiom synchronously. This means each time you log something, your application will wait for the request to Axiom to complete before continuing to process the request.
 
-One effective way to monitor your Laravel application is to send structured request logs _after_ the response has been sent. To accomplish this, you can create a [terminable middleware](https://laravel.com/docs/8.x/middleware#terminable-middleware) that sends the logs to Axiom after the response has been sent to the user.
+A better solution is to send structured request logs _after_ the response has been sent. To accomplish this, you can create a [terminable middleware](https://laravel.com/docs/8.x/middleware#terminable-middleware) that sends the logs to Axiom after the response has been sent to the user.
 
 ```php
 <?php
@@ -71,6 +71,8 @@ class RequestLogger
         ];
 
         Log::withContext($context);
+
+        // Note: You can use `Log::withContext()` to add context in other parts of your application, too!
 
         return $next($request);
     }
