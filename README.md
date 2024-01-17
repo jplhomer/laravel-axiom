@@ -37,6 +37,61 @@ AXIOM_API_TOKEN=your-api-token
 AXIOM_DATASET=your-dataset
 ```
 
+## Performance Considerations
+
+Since Axiom logs are sent over HTTP, you may want to consider the performance impact of sending logs during request time. By default, this package will send logs to Axiom synchronously. This means that, each time your log something, your application will wait for the request to Axiom to complete before continuing to process the request.
+
+One effective way to monitor your Laravel application is to send structured request logs _after_ the response has been sent. To accomplish this, you can create a [terminable middleware](https://laravel.com/docs/8.x/middleware#terminable-middleware) that sends the logs to Axiom after the response has been sent to the user.
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+
+class RequestLogger
+{
+    /**
+     * Log all the things that are relevant to the incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        $context = [
+            'request_host' => $request->getHost(),
+            'request_path' => str($request->path())->startsWith('/') ? $request->path() : "/{$request->path()}",
+            'request_query' => $request->getQueryString(),
+            'request_method' => $request->method(),
+            'request_user_agent' => $request->userAgent(),
+        ];
+
+        Log::withContext($context);
+
+        return $next($request);
+    }
+
+    public function terminate(Request $request, Response $response): void
+    {
+        $path = '/' . str($request->path())->ltrim('/');
+
+        $startTime = defined('LARAVEL_START') ? LARAVEL_START : $request->server('REQUEST_TIME_FLOAT');
+
+        $context = [
+            'status_code' => $response->getStatusCode(),
+            'processing_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+            'request_controller_action' => $request->route()?->getActionName(),
+        ];
+
+        Log::info("[{$response->getStatusCode()}] {$request->method()} {$path}", $context);
+    }
+}
+```
+
 ## Testing
 
 ```bash

@@ -2,9 +2,9 @@
     "name": "jplhomer/laravel-axiom",
     "description": "Laravel logging handler for Axiom",
     "keywords": [
-        "Jplhomer",
         "laravel",
-        "laravel-axiom"
+        "laravel-axiom",
+        "logging"
     ],
     "homepage": "https://github.com/jplhomer/laravel-axiom",
     "license": "MIT",
