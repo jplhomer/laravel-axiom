@@ -1,0 +1,5 @@
+<?php
+
+use Jplhomer\Axiom\Tests\TestCase;
+
+uses(TestCase::class)->in(__DIR__);
