@@ -94,6 +94,17 @@ class RequestLogger
 }
 ```
 
+Then, register the middleware in your Http Kernel:
+
+```php
+// app/Http/Kernel.php
+
+protected $middleware = [
+    // ...
+    \App\Http\Middleware\RequestLogger::class,
+];
+```
+
 ## Testing
 
 ```bash
